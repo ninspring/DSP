@@ -108,7 +108,8 @@ def szum_jedn(A, t1, d, N, filename):
     return params, szum
 
 
-def unit_impulse(A, t1, d, fs, ns, filename):
+def unit_impulse(A, t1, d, fs, filename):
+    ns = int(GUI.values['_ns_'])
     t2 = t1 + d
     N = int(d * fs)
     n = np.linspace(t1, t2, N)
@@ -120,15 +121,16 @@ def unit_impulse(A, t1, d, fs, ns, filename):
     return params, impuls
 
 
-def draw(signal, discrete):
+def draw(signal, discrete, x):
     histogram = GUI.values['_histogram_']
     params = signal[0]
     t1 = params[0]
     fs = params[1]
     time_signal = np.linspace(t1, (t1+(1/fs)*len(signal[1])), len(signal[1]))
+    plt.figure(x)
     plt.subplot(3, 1, 1)
-    if discrete == True:
-        plt.scatter(time_signal, signal[1], linewidth=0.5)
+    if discrete == False:
+        plt.scatter(time_signal, signal[1], linewidth=1)
     else:
         plt.plot(time_signal, signal[1])
     plt.xlabel('czas [s]')
@@ -141,10 +143,9 @@ def draw(signal, discrete):
     plt.hist(signal[1], histogram, facecolor='blue', alpha=0.75)
 
     plt.show(block=False)
-    plt.show()
 
 
-def add(signal1, signal2):
+def signal_operation(signal1, signal2):
     input_params1 = signal1[0]
     input_signal1 = signal1[1]
     input_params2 = signal2[0]
@@ -162,6 +163,7 @@ def add(signal1, signal2):
     kw_1 = input_params1[5]     #wspolczynnik wypelnienia
     kw_2 = input_params2[5]
 
+    #jeśli częstotliwości sygnałów nie są sobie równe, należy je przesamplować
     if(fs_1 != fs_2):
         if(fs_1 > fs_2):
             input_signal2 = sig.resample_poly(input_signal2, fs_1, fs_2)
@@ -170,24 +172,29 @@ def add(signal1, signal2):
             input_signal1 = sig.resample_poly(input_signal1, fs_2, fs_1)
             fs_1 = fs_2
 
-    if(t1_1 == t1_2):
-        if(d_1 > d_2):
+    if t1_1 == t1_2:
+        if d_1 > d_2:
             input_signal2 = input_signal2.tolist()
             empty_signal = [0 for i in range(int((d_1-d_2)/(1/fs_1)))]
             input_signal2.extend(empty_signal)
             input_signal2 = np.array(input_signal2)
-        elif(d_2 > d_1):
+        elif d_2 > d_1:
             input_signal1 = input_signal1.tolist()
             empty_signal = [0 for i in range(int((d_2-d_1)/(1/fs_2)))]
             input_signal1.extend(empty_signal)
             input_signal1 = np.array(input_signal2)
 
-        output_signal = input_signal1 + input_signal2
+        if GUI.values['_operation_'] == "Dodawanie":
+            output_signal = input_signal1 + input_signal2
+        elif GUI.values['_operation_'] == "Odejmowanie":
+            output_signal = input_signal1 - input_signal2
+        elif GUI.values['_operation_'] == "Mnożenie":
+            output_signal = input_signal1 * input_signal2
+        elif GUI.values['_operation_'] == "Dzielenie":
+            output_signal = np.divide(input_signal1, input_signal2, out=np.zeros_like(input_signal1), where=input_signal2 != 0)
+        output_signal_parmas = np.array([t1_1, fs_1])
 
-
-
-
-    elif(t1_1 > t1_2):
+    elif t1_1 > t1_2:
         a = int((t1_1-t1_2)/(1/fs_1))
         tmp_signal = [0 for i in range(a)]
         tmp_signal.extend(input_signal1)
@@ -203,7 +210,15 @@ def add(signal1, signal2):
             tmp_signal.extend(empty_array)
         tmp_signal = np.array(tmp_signal)
         input_signal2 = np.array(input_signal2)
-        output_signal = tmp_signal + input_signal2
+
+        if GUI.values['_operation_'] == "Dodawanie":
+            output_signal = tmp_signal + input_signal2
+        elif GUI.values['_operation_'] == "Odejmowanie":
+            output_signal = tmp_signal - input_signal2
+        elif GUI.values['_operation_'] == "Mnożenie":
+            output_signal = tmp_signal * input_signal2
+        elif GUI.values['_operation_'] == "Dzielenie":
+            output_signal = np.divide(tmp_signal, input_signal2, out=np.zeros_like(tmp_signal), where=input_signal2 != 0)
         output_signal_parmas = np.array([t1_2, fs_1])
 
     elif(t1_2 > t1_1):
@@ -222,7 +237,16 @@ def add(signal1, signal2):
             input_signal1.extend(empty_array)
         tmp_signal = np.array(tmp_signal)
         input_signal1 = np.array(input_signal1)
-        output_signal = tmp_signal + input_signal1
+
+        if GUI.values['_operation_'] == "Dodawanie":
+            output_signal = tmp_signal + input_signal1
+        elif GUI.values['_operation_'] == "Odejmowanie":
+            output_signal = tmp_signal - input_signal1
+        elif GUI.values['_operation_'] == "Mnożenie":
+            output_signal = tmp_signal * input_signal1
+        elif GUI.values['_operation_'] == "Dzielenie":
+            output_signal = np.divide(tmp_signal, input_signal1, out=np.zeros_like(tmp_signal), where=input_signal1 != 0)
+
         output_signal_parmas = np.array([t1_1, fs_2])
 
     filename = GUI.values['_filename_']

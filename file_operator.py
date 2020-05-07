@@ -12,9 +12,8 @@ def take_input():
     T = float(GUI.values['_T_'])
     kw = float(GUI.values['_kw_'])
     probki = int(GUI.values['_probki_'])
-    ns = int(GUI.values['_ns_'])
 
-    return name, A, czestotliwosc_probkowania, t1, d, T, kw, probki, file_1_path, ns
+    return name, A, czestotliwosc_probkowania, t1, d, T, kw, probki, file_1_path
 
 def take_input2():
     file_2_path = GUI.values['_file_path2_']
@@ -26,9 +25,8 @@ def take_input2():
     T = float(GUI.values['_T2_'])
     kw = float(GUI.values['_kw2_'])
     probki = int(GUI.values['_probki2_'])
-    ns2 = int(GUI.values['_ns2_'])
 
-    return name, A, czestotliwosc_probkowania, t1, d, T, kw, probki, file_2_path, ns2
+    return name, A, czestotliwosc_probkowania, t1, d, T, kw, probki, file_2_path
 
 def write_to_file(signal):
     f = open("signal.txt", "w+")

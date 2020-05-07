@@ -1,15 +1,18 @@
 import numpy as np
 import math
 import scipy.signal as sig
+import sympy
 
 def calc_signal(A, T, t1, d, fs, kw, values):
 
-    srednia = round((1/(values[-1]-values[0]+1)) * sum(values), 2)
-    srednia_bezwzglednia = round((1 / (values[-1] - values[0] + 1)) * math.fabs(sum(values)), 2)
-    moc_srednia = round((1 / (values[-1] - values[0] + 1)) * sum(map(lambda x: x * x, values)), 2)
-    wariancja = round((1 / (values[-1] - values[0] + 1)) * sum(map(lambda x: math.pow((x - srednia), 2), values)), 2)
-#    wartosc_skuteczna = round(math.sqrt(moc_srednia), 2)
-    wartosc_skuteczna = 0
+    samples_per_period = int(T/(1/fs))
+    period_values = values[:samples_per_period]
+
+    srednia = round((1/(period_values[-1]-period_values[0] + 1)) * sum(period_values), 2)
+    srednia_bezwzglednia = round((1 / (period_values[-1] - period_values[0] + 1)) * sum(map(lambda x: math.fabs(x), period_values)), 2)
+    moc_srednia = round((1 / (period_values[-1]-period_values[0] + 1)) * sum(map(lambda x: x * x, period_values)), 2)
+    wariancja = round((1 / (period_values[-1] - period_values[0] + 1)) * sum(map(lambda x: math.pow((x - srednia), 2), period_values)), 2)
+    wartosc_skuteczna = round(math.sqrt(moc_srednia), 2)
 
     print("Obliczone parametry:")
     print("------------------------------")

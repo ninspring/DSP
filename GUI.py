@@ -2,16 +2,23 @@ import PySimpleGUI as sg
 import main
 import numpy as np
 
+
 sg.theme('LightBlue6')
 # ------ Column Definition ------ #
 column1 = [[sg.Text('Wgraj z pliku:')],
             [sg.Input(key='_file_path_'), sg.FileBrowse()],
-            [sg.InputCombo(('Szum o rozkładzie jednostajnym', 'Sygnał sinusoidalny',
-                        'Sygnał sinusoidalny wyprostowany jednopołówkowo',
-                        'Sygnał sinusoidalny wyprostowany dwupołówkowo',
-                        'Sygnał prostokątny', 'Sygnał prostokątny symetryczny', 'Sygnał trójkątny', 'Skok jednostkowy',
-                        'Impuls jednostkowy', 'Szum impulsowy', 'draw'), key='_generate_what_', size=(50, 1))],
-            [sg.Text('Amplituda (A)'), sg.Input('5', key='_amplitude_', size=(5, 1))],
+            [sg.InputCombo(('Szum o rozkładzie jednostajnym',
+                            'Sygnał sinusoidalny',
+                            'Sygnał sinusoidalny wyprostowany jednopołówkowo',
+                            'Sygnał sinusoidalny wyprostowany dwupołówkowo',
+                            'Sygnał prostokątny',
+                            'Sygnał prostokątny symetryczny',
+                            'Sygnał trójkątny',
+                            'Skok jednostkowy',
+                            'Impuls jednostkowy'), key='_generate_what_', size=(50, 1))],
+            [sg.Radio('Sygnał ciągły', "RADIO1", default=True, key='_radio1_'),
+                        sg.Radio('Sygnał dyskretny', "RADIO1")],
+            [sg.Text('Amplituda (A)'), sg.Input('1', key='_amplitude_', size=(5, 1))],
             [sg.Text('Częstotliwość próbkowania'), sg.Input('1', key='_czestotliwosc_probkowania_', size=(5, 1)), sg.Text('Hz')],
             [sg.Text('Czas początkowy (t1)'), sg.Input('0', key='_t1_', size=(5, 1))],
             [sg.Text('Czas trwania sygnału (d)'), sg.Input('1', key='_d_', size=(5, 1)), sg.Text('s')],
@@ -21,12 +28,18 @@ column1 = [[sg.Text('Wgraj z pliku:')],
             [sg.Text('Numer próbki skoku (ns)'), sg.Input('0', key='_ns_', size=(5, 1))]]
 column2 = [[sg.Text('Wgraj z pliku:')],
             [sg.Input(key='_file_path2_'), sg.FileBrowse()],
-            [sg.InputCombo(('Szum o rozkładzie jednostajnym', 'Sygnał sinusoidalny',
-                        'Sygnał sinusoidalny wyprostowany jednopołówkowo',
-                        'Sygnał sinusoidalny wyprostowany dwupołówkowo',
-                        'Sygnał prostokątny', 'Sygnał prostokątny symetryczny', 'Sygnał trójkątny', 'Skok jednostkowy',
-                        'Impuls jednostkowy', 'Szum impulsowy'), key='_generate_what2_', size=(50, 1))],
-            [sg.Text('Amplituda (A)'), sg.Input('5', key='_amplitude2_', size=(5, 1))],
+            [sg.InputCombo(('Szum o rozkładzie jednostajnym',
+                            'Sygnał sinusoidalny',
+                            'Sygnał sinusoidalny wyprostowany jednopołówkowo',
+                            'Sygnał sinusoidalny wyprostowany dwupołówkowo',
+                            'Sygnał prostokątny',
+                            'Sygnał prostokątny symetryczny',
+                            'Sygnał trójkątny',
+                            'Skok jednostkowy',
+                            'Impuls jednostkowy'), key='_generate_what2_', size=(50, 1))],
+            [sg.Radio('Sygnał ciągły', "RADIO2", default=True, key='_radio2_'),
+                        sg.Radio('Sygnał dyskretny', "RADIO2")],
+            [sg.Text('Amplituda (A)'), sg.Input('1', key='_amplitude2_', size=(5, 1))],
             [sg.Text('Częstotliwość próbkowania'), sg.Input('1', key='_czestotliwosc_probkowania2_', size=(5, 1)), sg.Text('Hz')],
             [sg.Text('Czas początkowy (t1)'), sg.Input('0', key='_t12_', size=(5, 1))],
             [sg.Text('Czas trwania sygnału (d)'), sg.Input('1', key='_d2_', size=(5, 1)), sg.Text('s')],
@@ -40,11 +53,13 @@ layout = [
     [sg.Frame('Generacja sygnałów', [[
         sg.Column(column1),
         sg.Column(column2),
-        sg.Spin([i for i in range(5,21,5)], initial_value=15, key='_histogram_'), sg.Text('Liczba przedziałów histogramu')]])],
+        sg.Spin([i for i in range(5,21,5)], initial_value=5, key='_histogram_'), sg.Text('Liczba przedziałów histogramu')]])],
 
     [sg.Frame('Operacja na sygnałach', [[
         sg.InputCombo(('Dodawanie', 'Odejmowanie', 'Mnożenie', 'Dzielenie'), key='_operation_', size=(50, 1)),
-        sg.Text('Nazwa pliku wynikowego'), sg.Input('output_file', key='_filename_', size=(20, 1))]])],
+        sg.Text('Nazwa pliku wynikowego'), sg.Input('output_file', key='_filename_', size=(20, 1)),
+        sg.Radio('Sygnał ciągły', "RADIO3", default=True, key='_radio3_'),
+         sg.Radio('Sygnał dyskretny', "RADIO3")]])],
 
     [sg.Output (size=(100, 10),
                 key='_output_',
@@ -58,5 +73,7 @@ while True:
     event, values = window.Read()
     if event == 'Sygnał':
         main.main()
+    else:
+        break
 
 window.close()
